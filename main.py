@@ -125,6 +125,7 @@ class NeuralField(nn.Module):
 
         if not NOGRAPH:
             plt.show()
+            plt.figure()
 
         torch.save(model.state_dict(), f"{name}/{name}.pt")
 
