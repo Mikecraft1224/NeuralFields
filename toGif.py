@@ -6,12 +6,10 @@ def toGif(inputPath: str):
     frames: list[Image.Image] = []
 
     sortLambda = lambda x: int(x.split(".")[0].split("_")[-1])
-    names = sorted([file for file in os.listdir(inputPath) if file.endswith(".png") and not file.startswith("base")], key=sortLambda)
+    names = sorted([file for file in os.listdir(inputPath) if file.endswith(".png") and not file.startswith("base") and not file.startswith("loss")], key=sortLambda)
 
     for file in names:
         frames.append(Image.open(os.path.join(inputPath, file)))
-        if file.startswith("gen_"):
-            os.remove(os.path.join(inputPath, file))
 
     if len(frames) == 0:
         print(f"No PNG files found in {inputPath}")
@@ -28,6 +26,10 @@ def toGif(inputPath: str):
         loop=0,
         disposal=0,
     )
+
+    for file in names:
+        if file.startswith("gen_"):
+            os.remove(os.path.join(inputPath, file))
 
 
 def main():

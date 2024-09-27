@@ -110,16 +110,18 @@ class NeuralField(nn.Module):
 
             errors.append(loss.item())
 
-            if e % 100 == 0:
+            if e % 100 == 0 and not NOGRAPH:
                 print(f"Epoch {e}: {loss.item()}")
             if e % steps == 0 and steps != 0:
                 process_function(res, model, e)
 
+    
+        plt.plot(errors, label=f"{name}")
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.title("Loss Over Time")
+
         if not NOGRAPH:
-            plt.plot(errors)
-            plt.xlabel("Epoch")
-            plt.ylabel("Loss")
-            plt.title("Loss Over Time")
             plt.show()
 
         torch.save(model.state_dict(), f"{name}/{name}.pt")
@@ -230,6 +232,8 @@ if __name__ == '__main__':
                     op[key] = value
                 operations.append(op)
 
+        overallLoss = []
+
         for op in operations:
             start = time.time()
             print(f"Training {op['name']} (e: {op['epochs']}, s: {op['steps']}, r: {op['res']}, i: {op['input']}, h: {op['hidden']}, o: {op['output']}, l: {op['layers']}, d: {op['encdim']})")
@@ -242,10 +246,25 @@ if __name__ == '__main__':
             NeuralField.generateImage(res=res, model=model, name=f"{op['name']}/{op['name']}_{op['epochs']}", show=False, encdim=int(op['encdim']))
             toGif(op['name'])
 
+            overallLoss.append(loss)
+
             end = time.time()
             print(f"End time: {time.ctime(end)}")
             print(f"Time elapsed: {end - start:.2f} seconds")
             print(f"Final loss: {loss}\n")
+
+        plt.legend()
+        plt.savefig(f"loss_{os.path.basename(config).split('.')[0]}.png")
+
+        plt.figure()
+        plt.plot(overallLoss)
+        plt.xlabel("Dimension")
+        plt.ylabel("Loss")
+        plt.title("Loss Over Dimension")
+        plt.savefig(f"loss_{os.path.basename(config).split('.')[0]}_dim.png")
+
+        print("Losses:")
+        print(", ".join(map(str, overallLoss)))
         print("All operations complete")
     else:
         error()
