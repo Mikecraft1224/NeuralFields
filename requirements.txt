@@ -1,0 +1,5 @@
+matplotlib==3.8.2
+numpy==2.1.1
+Pillow==10.1.0
+Pillow==10.4.0
+torch==2.4.1+cu124

@@ -11,6 +11,8 @@ from toGif import toGif
 
 # FLAGS
 NOGRAPH = False
+HIDDEN = 256
+LAYERS = 8
 
 # Device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -60,7 +62,7 @@ class NeuralField(nn.Module):
             torch.tensor(colors, dtype=torch.float32).to(device)  # Move to GPU
         )
 
-    def trainData(img: str, name: str, gens: int, steps: int, res: int = None, input_size=2, hidden_size=1024, output_size=3, hidden_layers=10, encdim=2):
+    def trainData(img: str, name: str, gens: int, steps: int, res: int = None, input_size=2, hidden_size=HIDDEN, output_size=3, hidden_layers=LAYERS, encdim=2):
         if os.path.exists(name):
             print("Model already exists")
             sys.exit(1)
